@@ -10,6 +10,7 @@ const getMydiary = async (req, res) => {
     res.render("diary/my-diary", {
       title: "My Diary",
       diaries: diaries.reverse(),
+      isAuthenticated: req.session.isLogged,
     });
   } catch (err) {
     console.log(err);
