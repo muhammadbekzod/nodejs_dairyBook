@@ -1,5 +1,6 @@
 const db = require("../models/index");
 const Diary = db.diary;
+const Comment = db.comment;
 //Desc      GET all my diaries page
 //Route     GET /diary/my
 //Access    Private
@@ -8,7 +9,7 @@ const getMydiary = async (req, res) => {
     const diaries = await Diary.findAll({ raw: true });
     res.render("diary/my-diary", {
       title: "My Diary",
-      diaries: diaries,
+      diaries: diaries.reverse(),
     });
   } catch (err) {
     console.log(err);
@@ -36,13 +37,19 @@ const addNewDiary = async (req, res) => {
 //Access    Private
 const geDiaryById = async (req, res) => {
   try {
-    const diary = await Diary.findByPk(req.params.id, {
-      raw: true,
+    const data = await Diary.findByPk(req.params.id, {
+      raw: false,
+      plain: true,
+      include: ["comment"],
+      nest: true,
     });
+    const diary = await data.toJSON();
     res.render("diary/one-diary", {
       title: "Diary",
       diary: diary,
+      comments: diary.comment.reverse(),
     });
+    console.log(diary);
   } catch (err) {
     console.log(err);
   }
@@ -97,6 +104,22 @@ const deleteDiary = async (req, res) => {
     console.log(err);
   }
 };
+
+//Desc      Add comment
+//Route     POST /diary/comment/:id
+//Access    Private
+const addCommentDiary = async (req, res) => {
+  try {
+    await Comment.create({
+      name: "User name",
+      comment: req.body.comment,
+      diaryId: req.params.id,
+    });
+    res.redirect("/diary/" + req.params.id);
+  } catch (err) {
+    console.log(err);
+  }
+};
 module.exports = {
   getMydiary,
   addNewDiary,
@@ -104,4 +127,5 @@ module.exports = {
   updateDiaryPage,
   deleteDiary,
   updateDiary,
+  addCommentDiary,
 };

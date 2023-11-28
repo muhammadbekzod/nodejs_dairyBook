@@ -16,6 +16,8 @@ db.comment = require("./comment.model")(sequelize, Sequelize);
 
 db.diary.hasMany(db.comment, {
   as: "comment",
+  onDelete: "CASCADE",
+  constrains: true,
 });
 db.comment.belongsTo(db.diary, {
   foreignKey: "diaryId",
