@@ -7,16 +7,20 @@ const {
   updateDiary,
   deleteDiary,
   addCommentDiary,
+  getAlldiary,
 } = require("../controllers/dairy.controller");
 const router = Router();
+const { protected } = require("../middlewares/auth");
 
-router.get("/my", getMydiary);
-router.post("/add", addNewDiary);
+router.get("/my", protected, getMydiary);
+router.get("/all", protected, getAlldiary);
+router.post("/add", protected, addNewDiary);
 
-router.get("/update/:id", updateDiaryPage);
-router.post("/update/:id", updateDiary);
-router.post("/delete/:id", deleteDiary);
-router.post("/comment/:id", addCommentDiary);
+router.get("/update/:id", protected, updateDiaryPage);
+router.post("/update/:id", protected, updateDiary);
+router.post("/delete/:id", protected, deleteDiary);
 
-router.get("/:id", geDiaryById);
+router.post("/comment/:id", protected, addCommentDiary);
+
+router.get("/:id", protected, geDiaryById);
 module.exports = router;

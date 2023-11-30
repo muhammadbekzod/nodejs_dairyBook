@@ -1,4 +1,6 @@
 const db = require("../models/index");
+const { Op } = require("sequelize");
+const User = db.user;
 const Diary = db.diary;
 const Comment = db.comment;
 //Desc      GET all my diaries page
@@ -6,11 +8,41 @@ const Comment = db.comment;
 //Access    Private
 const getMydiary = async (req, res) => {
   try {
-    const diaries = await Diary.findAll({ raw: true });
+    // console.log(req.session.user);
+    const diaries = await Diary.findAll({
+      where: { userId: req.session.user.id },
+      raw: true,
+      plain: false,
+      include: ["user"],
+      nest: true,
+    });
     res.render("diary/my-diary", {
       title: "My Diary",
       diaries: diaries.reverse(),
-      isAuthenticated: req.session.isLogged,
+      isAuthenicated: req.session.isLogged,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+//Desc      GET all diaries
+//Route     GET /diary/all
+//Access    Private
+const getAlldiary = async (req, res) => {
+  try {
+    // console.log(req.session.user);
+    const diaries = await Diary.findAll({
+      where: { userId: { [Op.ne]: req.session.user.id } },
+      raw: true,
+      plain: false,
+      include: ["user"],
+      nest: true,
+    });
+    res.render("diary/all-diary", {
+      title: "All Diary",
+      diaries: diaries.reverse(),
+      isAuthenicated: req.session.isLogged,
     });
   } catch (err) {
     console.log(err);
@@ -26,6 +58,7 @@ const addNewDiary = async (req, res) => {
     await Diary.create({
       imageUrl: imageUrl,
       text: text,
+      userId: req.session.user.id,
     });
     res.redirect("/diary/my");
   } catch (err) {
@@ -41,16 +74,19 @@ const geDiaryById = async (req, res) => {
     const data = await Diary.findByPk(req.params.id, {
       raw: false,
       plain: true,
-      include: ["comment"],
+      include: ["comment", "user"],
       nest: true,
+      isAuthenicated: req.session.isLogged,
     });
+
     const diary = await data.toJSON();
+    // console.log(diary);
     res.render("diary/one-diary", {
       title: "Diary",
       diary: diary,
       comments: diary.comment.reverse(),
     });
-    console.log(diary);
+    // console.log(diary);
   } catch (err) {
     console.log(err);
   }
@@ -111,10 +147,12 @@ const deleteDiary = async (req, res) => {
 //Access    Private
 const addCommentDiary = async (req, res) => {
   try {
+    const user = await User.findByPk(req.session.user.id);
     await Comment.create({
-      name: "User name",
+      name: user.name,
       comment: req.body.comment,
       diaryId: req.params.id,
+      userId: user.id,
     });
     res.redirect("/diary/" + req.params.id);
   } catch (err) {
@@ -129,4 +167,5 @@ module.exports = {
   deleteDiary,
   updateDiary,
   addCommentDiary,
+  getAlldiary,
 };

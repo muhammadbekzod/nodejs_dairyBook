@@ -11,7 +11,7 @@
                 style="height: 30px;"
                 alt="..."
               />
-              <h5 class="card-title">Username</h5>
+              <h5 class="card-title">{{diary.user.name}}</h5>
             </a>
           </div>
           <p class="card-text">{{diary.text}}</p>
@@ -43,7 +43,7 @@
               rows="4"
             >{{diary.text}}</textarea>
           </div>
-
+          {{!-- <input type="hidden" value="{{csrfToken}}" name="_csrf" /> --}}
           <button type="submit" class="btn btn-primary mt-3">Add</button>
         </form>
       </div>
@@ -64,7 +64,7 @@
               </div>
               <div class="col-md-8">
                 <div class="card-body">
-                  <h5 class="card-title">User name</h5>
+                  <h5 class="card-title">{{name}}</h5>
                   <p class="card-text">{{comment}}</p>
                   <p class="card-text"><small
                       class="text-body-secondary"
@@ -72,7 +72,8 @@
                 </div>
               </div>
             </div>
-          </div>{{/each}}
+          </div>
+        {{/each}}
       {{/if}}
 
     </div>
