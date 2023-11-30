@@ -2,7 +2,7 @@ const { Router } = require("express");
 const {
   getMydiary,
   addNewDiary,
-  geDiaryById,
+  getDiaryById,
   updateDiaryPage,
   updateDiary,
   deleteDiary,
@@ -22,5 +22,5 @@ router.post("/delete/:id", protected, deleteDiary);
 
 router.post("/comment/:id", protected, addCommentDiary);
 
-router.get("/:id", protected, geDiaryById);
+router.get("/:id", protected, getDiaryById);
 module.exports = router;

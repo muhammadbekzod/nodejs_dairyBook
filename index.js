@@ -6,7 +6,7 @@ const pgStore = require("connect-pg-simple")(session);
 const csrf = require("csurf");
 const db = require("./models/index");
 const pool = require("./config/db");
-
+const flash = require("connect-flash");
 //Initial env variable
 
 dotenv.config();
@@ -26,6 +26,8 @@ app.use(
     saveUninitialized: false,
   })
 );
+
+app.use(flash());
 
 //Intialize tamplate engine (hbs)
 app.engine("hbs", exphbs.engine({ extname: ".hbs" }));

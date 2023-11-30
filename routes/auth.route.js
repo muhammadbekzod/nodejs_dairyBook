@@ -8,14 +8,35 @@ const {
 } = require("../controllers/auth.controller");
 const router = Router();
 const { guest, protected } = require("../middlewares/auth");
+const { body, check } = require("express-validator");
 
 router.get("/login", guest, getLoginPage);
 
-router.post("/login", guest, loginUser);
+router.post(
+  "/login",
+  [
+    check("email").isEmail().withMessage("Please enter valid email address"),
+    body("password", "Password must be at least 6 characters").isLength({
+      min: 6,
+    }),
+  ],
+  guest,
+  loginUser
+);
 
 router.get("/logout", protected, logout);
 
 router.get("/registration", guest, getRegisterPage);
-router.post("/registration", guest, registerUser);
+router.post(
+  "/registration",
+  [
+    body("email", "Please add valid email address").isEmail(),
+    // body("password", "Password must be at least 6 characters").isLength({
+    //   min: 6,
+    // }),
+  ],
+  guest,
+  registerUser
+);
 
 module.exports = router;

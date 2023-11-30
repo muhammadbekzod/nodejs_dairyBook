@@ -1,7 +1,12 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col-md-6 offset-3">
-      <form action="/auth/login" method="POST">
+      <form action="/auth/login" method="POST" novalidate>
+        {{#if errorMessage}}
+          <div class="alert alert-danger" role="alert">
+            {{errorMessage}}
+          </div>
+        {{/if}}
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
           <input type="email" class="form-control" name="email" id="email" />

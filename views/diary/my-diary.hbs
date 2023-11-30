@@ -3,6 +3,11 @@
     <div class="col-md-6 offset-3">
       <div class="card mt-3">
         <div class="card-body">
+          {{#if errorMessage}}
+            <div class="alert alert-danger" role="alert">
+              {{errorMessage}}
+            </div>
+          {{/if}}
           <form
             action="/diary/add"
             method="post"

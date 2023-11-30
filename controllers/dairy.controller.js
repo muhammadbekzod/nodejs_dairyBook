@@ -20,6 +20,7 @@ const getMydiary = async (req, res) => {
       title: "My Diary",
       diaries: diaries.reverse(),
       isAuthenicated: req.session.isLogged,
+      errorMessage: req.flash("error"),
     });
   } catch (err) {
     console.log(err);
@@ -55,6 +56,10 @@ const getAlldiary = async (req, res) => {
 const addNewDiary = async (req, res) => {
   try {
     const { imageUrl, text } = req.body;
+    if (text === "") {
+      req.flash("error", "Please add your diary");
+      return res.redirect("/diary/my");
+    }
     await Diary.create({
       imageUrl: imageUrl,
       text: text,
@@ -69,7 +74,7 @@ const addNewDiary = async (req, res) => {
 //Desc      GET diary
 //Route     GET /diary/my
 //Access    Private
-const geDiaryById = async (req, res) => {
+const getDiaryById = async (req, res) => {
   try {
     const data = await Diary.findByPk(req.params.id, {
       raw: false,
@@ -85,6 +90,7 @@ const geDiaryById = async (req, res) => {
       title: "Diary",
       diary: diary,
       comments: diary.comment.reverse(),
+      errorMessage: req.flash("error"),
     });
     // console.log(diary);
   } catch (err) {
@@ -148,6 +154,10 @@ const deleteDiary = async (req, res) => {
 const addCommentDiary = async (req, res) => {
   try {
     const user = await User.findByPk(req.session.user.id);
+    if (req.body.comment === "") {
+      req.flash("error", "Please add your comment");
+      return res.redirect("/diary/" + req.params.id);
+    }
     await Comment.create({
       name: user.name,
       comment: req.body.comment,
@@ -162,7 +172,7 @@ const addCommentDiary = async (req, res) => {
 module.exports = {
   getMydiary,
   addNewDiary,
-  geDiaryById,
+  getDiaryById,
   updateDiaryPage,
   deleteDiary,
   updateDiary,
