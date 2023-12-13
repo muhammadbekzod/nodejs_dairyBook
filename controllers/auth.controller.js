@@ -30,6 +30,9 @@ const loginUser = async (req, res) => {
         title: " Login",
         isAuthenicated,
         errorMessage: errors.array()[0].msg,
+        oldInput: {
+          email: req.body.email,
+        },
       });
     }
     const userExist = await User.findOne({ where: { email: req.body.email } });
@@ -47,7 +50,14 @@ const loginUser = async (req, res) => {
         });
       } else {
         req.flash("error", "You entered wrong email or password");
-        return res.redirect("/auth/login");
+        return res.status(400).render("auth/login", {
+          title: " Login",
+          isAuthenicated,
+          errorMessage: req.flash("error"),
+          oldInput: {
+            email: req.body.email,
+          },
+        });
       }
     } else {
       req.flash("error", "You entered wrong email or password");
@@ -88,6 +98,21 @@ const getRegisterPage = async (req, res) => {
 const registerUser = async (req, res) => {
   try {
     const { email, name, password, password2 } = req.body;
+    const isAuthenicated = req.session.isLogged;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).render("auth/registration", {
+        title: "Registration",
+        isAuthenicated,
+        errorMessage: errors.array()[0].msg,
+        oldInput: {
+          email,
+          name,
+          password,
+          password2,
+        },
+      });
+    }
     if (password !== password2) {
       req.flash("error", "Password doesn't match");
       return res.redirect("/auth/registration");

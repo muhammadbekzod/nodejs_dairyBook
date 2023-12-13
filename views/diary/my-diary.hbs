@@ -8,16 +8,12 @@
               {{errorMessage}}
             </div>
           {{/if}}
-          <form
-            action="/diary/add"
-            method="post"
-            enctype="application/x-www-form-urlencoded"
-          >
+          <form action="/diary/add" method="post" enctype="multipart/form-data">
             <div class="mb-3">
               <label for="imageUrl" class="form-label">Image URL</label>
               <input
                 class="form-control"
-                type="text"
+                type="file"
                 name="imageUrl"
                 id="imageUrl"
               />

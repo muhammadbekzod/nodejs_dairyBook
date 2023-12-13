@@ -3,6 +3,8 @@ const { Op } = require("sequelize");
 const User = db.user;
 const Diary = db.diary;
 const Comment = db.comment;
+const { validationResult } = require("express-validator");
+
 //Desc      GET all my diaries page
 //Route     GET /diary/my
 //Access    Private
@@ -55,13 +57,30 @@ const getAlldiary = async (req, res) => {
 //Access    Private
 const addNewDiary = async (req, res) => {
   try {
-    const { imageUrl, text } = req.body;
-    if (text === "") {
-      req.flash("error", "Please add your diary");
-      return res.redirect("/diary/my");
+    const { text } = req.body;
+    // console.log(req.file);
+    // console.log(req.text);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const diaries = await Diary.findAll({
+        where: { userId: req.session.user.id },
+        raw: true,
+        plain: false,
+        include: ["user"],
+        nest: true,
+      });
+      return res.status(400).render("diary/my-diary", {
+        title: "My Dairies",
+        isAuthenicated: req.session.isLogged,
+        diaries: diaries.reverse(),
+        errorMessage: errors.array()[0].msg,
+      });
     }
+
+    const fileUrl = req.file ? "/uploads/" + req.file.filename : "";
+
     await Diary.create({
-      imageUrl: imageUrl,
+      imageUrl: fileUrl,
       text: text,
       userId: req.session.user.id,
     });

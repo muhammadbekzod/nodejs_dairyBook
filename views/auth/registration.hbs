@@ -6,15 +6,27 @@
           {{errorMessage}}
         </div>
       {{/if}}
-      <form action="/auth/registration" method="POST">
+      <form action="/auth/registration" method="POST" novalidate>
 
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
-          <input type="email" class="form-control" name="email" id="email" />
+          <input
+            type="email"
+            class="form-control"
+            name="email"
+            id="email"
+            value="{{oldInput.email}}"
+          />
         </div>
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
-          <input type="name" class="form-control" name="name" id="name" />
+          <input
+            type="name"
+            class="form-control"
+            name="name"
+            id="name"
+            value="{{oldInput.name}}"
+          />
         </div>
         <div class="mb-3">
           <label for="password" class="form-label">Password</label>
@@ -23,6 +35,7 @@
             class="form-control"
             name="password"
             id="password"
+            value="{{oldInput.password}}"
           />
         </div>
         <div class="mb-3">
@@ -32,6 +45,7 @@
             class="form-control"
             name="password2"
             id="password2"
+            value="{{oldInput.password2}}"
           />
         </div>
         <input type="hidden" value="{{csrfToken}}" name="_csrf" />

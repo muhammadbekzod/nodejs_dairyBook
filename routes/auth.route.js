@@ -20,6 +20,7 @@ router.post(
       min: 6,
     }),
   ],
+
   guest,
   loginUser
 );
@@ -31,9 +32,12 @@ router.post(
   "/registration",
   [
     body("email", "Please add valid email address").isEmail(),
-    // body("password", "Password must be at least 6 characters").isLength({
-    //   min: 6,
-    // }),
+    body("name", "Name can contain only ALPHABETICAL characters").isAlpha(),
+    body("password", "Password must be at least 6 characters")
+      .isLength({
+        min: 6,
+      })
+      .isAlphanumeric(),
   ],
   guest,
   registerUser
