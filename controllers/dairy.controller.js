@@ -11,6 +11,7 @@ const { validationResult } = require("express-validator");
 const getMydiary = async (req, res) => {
   try {
     // console.log(req.session.user);
+
     const diaries = await Diary.findAll({
       where: { userId: req.session.user.id },
       raw: true,
@@ -34,18 +35,33 @@ const getMydiary = async (req, res) => {
 //Access    Private
 const getAlldiary = async (req, res) => {
   try {
-    // console.log(req.session.user);
+    const page = +req.query.page || 1;
+    const itemLimit = 2;
+    // console.log(req.query.page);
     const diaries = await Diary.findAll({
-      where: { userId: { [Op.ne]: req.session.user.id } },
+      // where: { userId: { [Op.ne]: req.session.user.id } },
       raw: true,
       plain: false,
       include: ["user"],
       nest: true,
+      limit: itemLimit,
+      offset: (page - 1) * itemLimit,
     });
+    const totalData = await Diary.count();
+    const lastPage = Math.ceil(totalData / itemLimit);
     res.render("diary/all-diary", {
       title: "All Diary",
       diaries: diaries.reverse(),
       isAuthenicated: req.session.isLogged,
+      totalData: totalData,
+      currentPage: page,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      hasNextPage: page * itemLimit < totalData,
+      hasPrevPage: page - 1,
+      lastPage: lastPage,
+      currentPageAndPrevPageNotEqualOne: page !== 1 && page - 1 !== 1,
+      lastPageChacking: lastPage !== page && page + 1 !== lastPage,
     });
   } catch (err) {
     console.log(err);
